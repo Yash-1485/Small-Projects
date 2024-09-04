@@ -1,1 +1,1612 @@
+import java.util.*;
+import javax.swing.*;
+import java.awt.*;
+class Authentication
+{
+    Scanner sc=new Scanner(System.in);
+    String ac,mobile_no;
+    //final String adminid="BOB7531598254";
+    //final String adminpin="BankStaff7531598254";
+    Authentication()
+    {
 
+        boolean flag=true;
+        while(flag)
+        {
+            System.out.println("Press 1 for Admin");
+            System.out.println("Press 2 for Customer");
+            System.out.println("Press 3 to Exit");
+            System.out.print("Enter Number from above given choices: ");
+            int ch1=sc.nextInt();
+            switch(ch1)
+            {
+                case 1:
+                {
+                    Admin a1=new Admin();
+                    break;
+                }
+                case 2:
+                {
+                    System.out.println("Press 1 for Existing Customer");
+                    System.out.println("Press 2 for New Customer");
+                    int ch2=sc.nextInt();
+                    switch(ch2)
+                    {
+                        case 1:
+                        {
+                            Existing_Customer e1=new Existing_Customer();
+                            Existing_Customer.setExistingCustomer();
+                            System.out.println("Enter Your Account No.: ");
+                            ac=e1.validateAccountNumber(ac);
+
+                            System.out.println("Enter Your Registered Mobile No.: ");
+                            mobile_no=e1.validateMobileNo(mobile_no);
+                            e1=e1.getAccount(ac,mobile_no);
+                            e1.display_account_details();
+                            if(e1.transaction_allowed)
+                            {
+                                e1.OperationsOnAccount(e1.account_type);
+                            }
+                            break;
+                        }
+                        case 2:
+                        {
+                            New_Customer n1=new New_Customer();
+                            n1.New_Customer();
+                            n1.display_account_details();
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case 3:
+                {
+                    System.out.println();
+                    System.exit(0);
+                }
+                default:
+                {
+                    System.out.println("Enter Number from 1 & 2 only");
+                }
+            }
+        }
+    }
+}
+
+
+//For Existing Customer
+class Existing_Customer extends New_Customer
+{
+
+    static Existing_Customer e[]=new Existing_Customer[5];
+    String ac;
+    int a;
+    static double balance;
+    boolean debit_card=false;
+    String accountnumber;
+    String consumer_number;
+    double bill_amount;
+    static boolean transaction_allowed;
+    //Data of Existing Customer
+    static public void setExistingCustomer()
+    {
+        for(int i=0;i<e.length;i++)
+        {
+            e[i]=new Existing_Customer();
+        }
+        //========================================Customer 1============================================================
+        e[0].f_name="Yash";e[0].m_name="Arunbhai";e[0].l_name="Parekh";e[0].mobile_no="8160924672";e[0].ac="753159825458";
+        e[0].phone_no="NA";e[0].date=14;e[0].month=8;e[0].year=2005;e[0].gender="Male";e[0].nationality="Indian";
+        e[0].religion="Hindu";e[0].category="OBC";e[0].place_of_birth="Jodhpur";e[0].account_type="Current";
+        e[0].father_f_name="Arunbhai";e[0].father_m_name="Amrutlal";e[0].father_l_name="Parekh";e[0].father_occupation="Business";
+        e[0].mother_f_name="Ilaben";e[0].mother_m_name="Arunbhai";e[0].mother_l_name="Parekh";e[0].mother_occupation="Housewife";
+        e[0].pre_address="Akshardham Bunglows-2";e[0].per_address="Same as Present Address";e[0].city="Ahmedabad";
+        e[0].village="Bopal";e[0].district="Daskroi";e[0].state="Gujarat";e[0].country="India";
+        e[0].PAN="YASHP1234P";e[0].aadhar="123456789012";e[0].dl="Not Given";e[0].voterid="Not Given";;e[0].age=18;
+        e[0].marital_status=false;e[0].balance=1000000;;e[0].transaction_allowed=true;
+        //==============================================================================================================
+
+        //========================================Customer 2============================================================
+        e[1].f_name="Pooja";e[1].m_name="Arunbhai";e[1].l_name="Parekh";e[1].mobile_no="1234567890";e[1].ac="753159825459";
+        e[1].phone_no="NA";e[1].date=6;e[1].month=7;e[1].year=2003;e[1].gender="Female";e[1].nationality="Indian";
+        e[1].religion="Hindu";e[1].category="OBC";e[1].place_of_birth="Jodhpur";e[1].account_type="Savings";
+        e[1].father_f_name="Arunbhai";e[1].father_m_name="Amrutlal";e[1].father_l_name="Parekh";e[1].father_occupation="Business";
+        e[1].mother_f_name="Ilaben";e[1].mother_m_name="Arunbhai";e[1].mother_l_name="Parekh";e[1].mother_occupation="Housewife";
+        e[1].pre_address="Akshardham Bunglows-2";e[1].per_address="Same as Present Address";e[1].city="Ahmedabad";
+        e[1].village="Bopal";e[1].district="Daskroi";e[1].state="Gujarat";e[1].country="India";
+        e[1].PAN="POOJA1234F";e[1].aadhar="123456789013";e[1].dl="Not Given";e[1].voterid="Not Given";;e[1].age=20;
+        e[1].marital_status=false;e[1].balance=500000;e[1].debit_card=true;e[1].transaction_allowed=true;
+        //==============================================================================================================
+
+        //========================================Customer 3============================================================
+        e[2].f_name="Arunbhai";e[2].m_name="Amrutlal";e[2].l_name="Parekh";e[2].mobile_no="9825481780";e[2].ac="753159825460";
+        e[2].phone_no="NA";e[2].date=25;e[2].month=1;e[2].year=1972;e[2].gender="Male";e[2].nationality="Indian";
+        e[2].religion="Hindu";e[2].category="General";e[2].place_of_birth="Balva";e[2].account_type="Current";
+        e[2].father_f_name="Amrutlal";e[2].father_m_name="Madhalal";e[2].father_l_name="Parekh";e[2].father_occupation="Retired Job Person";
+        e[2].mother_f_name="Shardaben";e[2].mother_m_name="Amrutlal";e[2].mother_l_name="Parekh";e[2].mother_occupation="Housewife";
+        e[2].pre_address="Akshardham Bunglows-2";e[2].per_address="Same as Present Address";e[2].city="Ahmedabad";
+        e[2].village="Bopal";e[2].district="Daskroi";e[2].state="Gujarat";e[2].country="India";
+        e[2].PAN="ARUNA1234F";e[2].aadhar="123456789014";e[2].dl="Not Given";e[2].voterid="Not Given";;e[2].age=51;
+        e[2].marital_status=true;e[2].Wife_f_name="Arunbhai";e[2].Wife_m_name="Ilaben";e[2].Wife_l_name="Parekh";
+        e[2].balance=2000000;e[2].transaction_allowed=true;
+        //==============================================================================================================
+
+        //========================================Customer 4============================================================
+        e[3].f_name="Ilaben";e[3].m_name="Arunbhai";e[3].l_name="Parekh";e[3].mobile_no="8320191758";e[3].ac="753159825461";
+        e[3].phone_no="NA";e[3].date=3;e[3].month=10;e[3].year=1974;e[3].gender="Female";e[3].nationality="Indian";
+        e[3].religion="Hindu";e[3].category="OBC";e[3].place_of_birth="Ambapur";e[3].account_type="Savings";
+        e[3].father_f_name="Bhalabhai";e[3].father_m_name="Somabhai";e[3].father_l_name="Parekh";e[3].father_occupation="Farmer";
+        e[3].mother_f_name="Jeeviben";e[3].mother_m_name="Bhalabhai";e[3].mother_l_name="Parekh";e[3].mother_occupation="Housewife";
+        e[3].pre_address="Akshardham Bunglows-2";e[3].per_address="Same as Present Address";e[3].city="Ahmedabad";
+        e[3].village="Bopal";e[3].district="Daskroi";e[3].state="Gujarat";e[3].country="India";
+        e[3].PAN="ILAAR1234F";e[3].aadhar="123456789015";e[3].dl="Not Given";e[3].voterid="Not Given";;e[3].age=49;
+        e[3].marital_status=true;e[3].Hus_f_name="Arunbhai";e[3].Hus_m_name="Amrutlal";e[3].Hus_l_name="Parekh";
+        e[3].balance=200000;e[3].debit_card=false;e[3].transaction_allowed=true;
+        //==============================================================================================================
+
+        //========================================Customer 5============================================================
+        e[4].f_name="Ravi";e[4].m_name="Rajubhai";e[4].l_name="Parekh";e[4].mobile_no="1244211234";e[4].ac="753159825462";
+        e[4].phone_no="NA";e[4].date=14;e[4].month=1;e[4].year=1996;e[4].gender="Male";e[4].nationality="Indian";
+        e[4].religion="Hindu";e[4].category="OBC";e[4].place_of_birth="Limbdia";e[4].account_type="Current";
+        e[4].father_f_name="Rajubhai";e[4].father_m_name="Babubhai";e[4].father_l_name="Parekh";e[4].father_occupation="Business";
+        e[4].mother_f_name="Anitaben";e[4].mother_m_name="Rajubhai";e[4].mother_l_name="Parekh";e[4].mother_occupation="Housewife";
+        e[4].pre_address="Ghar No. 204";e[4].per_address="Same as Present Address";e[4].city="Gandhinagar";
+        e[4].village="Limbdia";e[4].district="Gandhinagar";e[4].state="Gujarat";e[4].country="India";
+        e[4].PAN="RAVIR1234P";e[4].aadhar="123456789016";e[4].dl="Not Given";e[4].voterid="Not Given";;e[4].age=27;
+        e[4].marital_status=true;e[4].Wife_f_name="Foram";e[4].Wife_m_name="Ravibhai";e[4].Wife_l_name="Parekh";
+        e[4].balance=500000;e[4].transaction_allowed=true;
+        //==============================================================================================================
+    }
+
+    //All Bank Account Details
+    public void all_Details()
+    {
+        for(int i=0;i<e.length;i++)
+        {
+            System.out.println("Customer#"+(i+1));
+            e[i].display_account_details();
+        }
+    }
+
+    //getAccount that return reference of account
+    public Existing_Customer getAccount(String m,String n)
+    {
+        int i=0;
+        for(i=0;i<e.length;i++)
+        {
+            if(e[i].ac.equals(m) && e[i].mobile_no.equals(n))
+            {
+                break;
+            }
+        }
+        return e[i];
+    }
+    //Validating Account Number
+    public String validateAccountNumber(String ac)
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            ac=sc.nextLine();
+            if(ac.length()==12) {
+                for (int i = 0; i < ac.length(); i++) {
+                    flag = true;
+                    if (ac.charAt(i) >= '0' && ac.charAt(i) <= '9') {
+                        flag = false;
+                    } else {
+                        System.out.println("Kindly Enter Account Number Between 0 to 9 Digits");
+                        flag = false;
+                    }
+                }
+            }
+            else if(ac.equalsIgnoreCase("Exit"))
+            {
+                System.exit(0);
+            }
+            else
+            {
+                System.out.println("Kindly Enter 12 Digit Account Number");
+            }
+
+            if(flag==false)
+            {
+                flag=validateRegisteredAccountNumber(ac);
+                if(flag==true) {
+                    System.out.println("Account Number Not Exist");
+                }
+            }
+        }
+        return ac;
+    }
+
+    //Validating MobileNumber
+    public String validateMobileNo(String n)
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            n=sc.nextLine();
+            if(n.length()==10)
+            {
+                for(int i=0;i<n.length();i++)
+                {
+                    flag=true;
+                    if(n.charAt(i)>='0' && n.charAt(i)<='9')
+                    {
+                        flag=false;
+                    }
+                    else
+                    {
+                        System.out.println("Kindly Enter Mobile Number Between 0 to 9 Digits");
+                    }
+                }
+            }
+            else if(n.equalsIgnoreCase("Exit"))
+            {
+                System.exit(0);
+            }
+            else
+            {
+                System.out.println("Kindly Enter Valid Digit Mobile Number");
+            }
+
+            flag=validateRegisteredMobileNo(n);
+
+            if(flag==false)
+            {
+                System.out.println("Enter OTP Seen in Window: ");
+                validateOTP();
+                int otp=sc.nextInt();
+                if(otp==a)
+                {
+                    System.out.println("Mobile Number Verified Successfully");
+                     flag=false;
+                }
+                else {
+                    System.out.println("Wrong OTP");
+                    flag=true;
+                }
+            }
+            else {
+                System.out.println("Registered Mobile Number Not Found");
+            }
+
+            if(flag==false)
+            {
+                System.out.println("Account Number & Mobile Number Verified Successfully");
+            }
+        }
+        return n;
+    }
+
+    //Generating OTP
+    public void validateOTP()
+    {
+        Existing_Customer e2=new Existing_Customer();
+        JFrame OTP=new JFrame();
+        OTP.setBounds(500,350,150,120);
+        OTP.setTitle("OTP Window");
+        OTP.setVisible(true);
+        Container c=OTP.getContentPane();
+        a=(int)(Math.random()*10000);
+        int ans=e2.countdigi(a);
+        if(ans!=4)
+        {
+            a*=Math.pow(10,ans);
+        }
+
+        JLabel otp=new JLabel();
+        otp.setText("OTP: "+a);
+        c.add(otp);
+        OTP.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        OTP.setVisible(true);
+    }
+
+    //Counting Digits
+    public int countdigi(int n)
+    {
+        int count=0;
+        while(n>0)
+        {
+            count++;
+            n/=10;
+        }
+        return count;
+    }
+
+    //Validating Regeistered Mobile No.
+    public boolean validateRegisteredMobileNo(String n)
+    {
+        int ac=0;
+        for(int i=0;i<e.length;i++)
+        {
+            if(n.equals(e[i].mobile_no))
+            {
+                ac=1;
+                break;
+            }
+        }
+        if(ac==1){
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    //Validating Registered AccountNumber
+    public boolean validateRegisteredAccountNumber(String n)
+    {
+        int m=0;
+        for(int i=0;i<e.length;i++)
+        {
+            if(n.equals(e[i].ac))
+            {
+                m=1;
+                break;
+            }
+        }
+        if(m==1)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    //Operations on Given Account Type
+    public void OperationsOnAccount(String n)
+    {
+        System.out.println("You are at the Account Operation Window");
+        System.out.println("------------------------------------------------------------------------");
+        System.out.println("Your Account Type is: "+n);
+        System.out.println("------------------------------------------------------------------------");
+        System.out.println("========================================================================");
+        System.out.println("--------------Welcome to the Online Account Service Portal--------------");
+        System.out.println("========================================================================");
+        int ch=0;
+        if(n.equals("Savings")||n.equals("Current")||n.equals("NRI")) {ch=1;}
+        else if(n.equals("Fixed Deposit")){ch=2;}
+        else if(n.equals("PPF")){ch=3;}
+        else{ch=0;}
+        boolean flag=true;
+        while(flag)
+        {
+            switch(ch)
+            {
+                case 1:
+                {
+                    System.out.println("1.To see the balance for account");
+                    System.out.println("2.Transact Money");
+                    System.out.println("3.Pay Electricity Bill");
+                    System.out.println("4.Pay Municipal Corporation Tax Bill");
+                    System.out.println("5.Pay DTH/Cable Bill");
+                    System.out.println("6.For Debit Card Inquiry");
+                    System.out.println("7.Exit");
+                    System.out.println("Enter Your Choice: ");
+                    int c1=sc.nextInt();
+
+                    switch(c1)
+                    {
+                        case 1:
+                        {
+                            System.out.println("========================================================================");
+                            System.out.println("Your Account Type is: "+account_type);
+                            System.out.println("Your Current Balance is: Rs."+balance);
+                            System.out.println("========================================================================");
+                            break;
+                        }
+
+                        case 2:
+                        {
+                            System.out.println("--------------------------Transaction Window--------------------------------");
+                            System.out.println("========================================================================");
+                            while(true)
+                            {
+                                System.out.println("Enter Yes to transact money to the current bank account");
+                                System.out.println("Enter No to transact money to another bank account");
+                                String s=sc.next();
+                                String bank_name="";
+                                int acn=0;
+                                boolean m=false;
+                                if(s.equalsIgnoreCase("Yes")||s.equalsIgnoreCase("Yup")){m=true;acn=12;}
+                                else{m=false;}
+                                if(!m){
+                                    while(true)
+                                    {
+                                        System.out.println("Enter Digits of that Bank Account Number: ");
+                                        acn=sc.nextInt();
+                                        if(acn>=8 && acn<=12)
+                                        {
+                                            System.out.println("Enter BankName that you have Transacted: ");
+                                            bank_name=validate_Name(bank_name);
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            System.out.println("Enter Valid Digits of Account Number");
+                                        }
+                                    }
+                                }
+
+                                System.out.println("Enter Account Number: ");
+                                accountnumber=validateTransactionACNo(accountnumber,acn,m,ac);
+
+                                System.out.println("Enter Money that you want to Transact: ");
+                                double deposit=sc.nextDouble();
+                                if(deposit>=1)
+                                {
+                                    balance-=deposit;
+                                    if(!m)
+                                    {
+                                        System.out.println("You Have Transacted money to the "+bank_name+" Account");
+                                        System.out.println("You've Deposited Rs."+deposit+" to account number: "+accountnumber);
+                                        System.out.println("Now your Account Balance is: Rs."+balance);
+                                    }
+                                    else
+                                    {
+                                        System.out.println("You've Deposited Rs."+deposit+" to account number: "+accountnumber);
+                                        System.out.println("Now your Account Balance is: Rs."+balance);
+                                    }
+                                    break;
+                                }
+                                else {
+                                    System.out.println("Deposit able money should be greater than or equals to 1");
+                                    System.out.println("Re-Enter Money that you want to deposit");
+                                }
+                            }
+                            System.out.println("========================================================================");
+                            break;
+                        }
+
+                        case 3:
+                        {
+                            System.out.println("--------------------------Electricity Bill------------------------------");
+                            System.out.println("========================================================================");
+                            consumer_number=billpay("Electricity Bill",consumer_number,12,true);
+                            System.out.println("Enter Bill Amount: ");
+                            bill_amount=sc.nextDouble();
+                            balance-=bill_amount;
+                            System.out.println("Consumer Number is: "+consumer_number);
+                            System.out.println("You've Transacted Rs."+bill_amount+" for Electricity Bill Payment");
+                            System.out.println("Now your Account Balance is: Rs."+balance);
+                            System.out.println("========================================================================");
+                            break;
+                        }
+                        case 4:
+                        {
+                            System.out.println("-------------------------Municipal Corporation Tax Bill---------------------------------");
+                            System.out.println("========================================================================");
+                            consumer_number=billpay("Municipal Corporation Tax Bill",consumer_number,12,false);
+                            System.out.println("Enter Bill Amount: ");
+                            bill_amount=sc.nextDouble();
+                            balance-=bill_amount;
+                            System.out.println("Consumer Number is: "+consumer_number);
+                            System.out.println("You've Transacted Rs."+bill_amount+" for Municipal Corporation Bill Payment");
+                            System.out.println("Now your Account Balance is: Rs."+balance);
+                            System.out.println("========================================================================");
+                            break;
+                        }
+                        case 5:
+                        {
+                            System.out.println("------------------DTH/Cable Bill------------------------");
+                            System.out.println("========================================================================");
+                            consumer_number=billpay("DTH/Cable BillMunicipal Corporation Tax Bill",consumer_number,10,true);
+                            System.out.println("Enter Bill Amount: ");
+                            bill_amount=sc.nextDouble();
+                            balance-=bill_amount;
+                            System.out.println("Consumer Number is: "+consumer_number);
+                            System.out.println("You've Transacted Rs."+bill_amount+" for DTH/Cable Bill Payment");
+                            System.out.println("Now your Account Balance is: Rs."+balance);
+                            System.out.println("========================================================================");
+                            break;
+                        }
+                        case 6:
+                        {
+                            System.out.println("--------------------------Debit Card Window--------------------------------");
+                            System.out.println("========================================================================");
+                            if(!debit_card)
+                            {
+                                System.out.println("Yeah we have received your response for Debit Card");
+                                System.out.println("You have to write an application for this");
+                                System.out.println("We will verify that application & soon you have you debit card");
+                                String s="";
+                                System.out.println("Enter Your Application");
+                                s=sc.nextLine();
+                            }
+                            else
+                            {
+                                System.out.println("You already have a Debit Card");
+                            }
+                            System.out.println("========================================================================");
+                            break;
+                        }
+                        case 7:
+                        {
+                            System.exit(0);
+                        }
+                        default:
+                        {
+                            System.out.println("================================================================================================");
+                            flag=false;
+                        }
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    break;
+                }
+                case 3:
+                {
+                    break;
+                }
+                    default:
+                    {
+                        System.out.println("Enter Valid Input");
+                    }
+
+            }
+        }
+    }
+
+    //Transact Money to another Account
+    public String validateTransactionACNo(String accountnumber,int n,boolean m,String y)
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            accountnumber=sc.next();
+            if(accountnumber.length()==n) {
+                for (int i = 0; i < accountnumber.length(); i++) {
+                    flag = true;
+                    if (accountnumber.charAt(i) >= '0' && accountnumber.charAt(i) <= '9') {
+                        flag = false;
+                    } else {
+                        System.out.println("Kindly Enter Account Number Between 0 to 9 Digits");
+                        flag = false;
+                    }
+                }
+            }
+            if(accountnumber.equals(y)){
+                System.out.println("Account Number Cannot be Yours");
+                flag=true;
+                System.out.println("Re-Enter Account Number");
+                continue;
+            }
+            else if(accountnumber.equalsIgnoreCase("Exit"))
+            {
+                System.exit(0);
+            }
+            else if(accountnumber.length()!=n)
+            {
+                System.out.println("Kindly Enter "+n+" Digit Account Number");
+            }
+
+            if(m)
+            {
+                if(flag==false)
+                {
+                    flag=validateRegisteredAccountNumber(accountnumber);
+                    if(flag==true) {
+                        System.out.println("Account Number Not Exist");
+                    }
+                }
+            }
+        }
+        return accountnumber;
+    }
+
+    //For Bill Paying
+    public String billpay(String a,String b,int n,boolean m)
+    {
+        boolean flag=true;
+        System.out.println("Enter Consumer Number of "+a+" :");
+        while(flag)
+        {
+            b=sc.nextLine();
+            if(b.length()==n)
+            {
+                if(m)
+                {
+                    for(int i=0;i<b.length();i++)
+                    {
+                        flag=true;
+                       if(b.charAt(i)>='0' && b.charAt(i)<='9')
+                       {
+                           flag=false;
+                           continue;
+                       }
+                       else
+                       {
+                           System.out.println("Enter Digits between 0 to 9 only");
+                           break;
+                       }
+                    }
+                }
+                else
+                {
+                    for(int i=0;i<b.length();i++)
+                    {
+                        flag=true;
+                        if((b.charAt(i)>='0' && b.charAt(i)<='9')||(b.charAt(i)>='A' && b.charAt(i)<='Z'))
+                        {
+                                flag=false;
+                                continue;
+                        }
+                        else
+                        {
+                                System.out.println("Enter Valid Input");
+                                break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                System.out.println("Kindly Enter Valid Input of "+n+" Digits");
+            }
+        }
+        return b;
+    }
+}
+
+//For New Customer
+class New_Customer
+{
+    Scanner sc=new Scanner(System.in);
+    String f_name,m_name,l_name;
+    String Hus_f_name="",Hus_m_name="",Hus_l_name="";
+    String Wife_f_name="",Wife_m_name="",Wife_l_name="";
+    boolean marital_status;
+    String mobile_no,phone_no,PAN="",pincode="",aadhar="",voterid="",dl="";
+    String pre_address,per_address;
+    String city,village,district,state,country;
+    String father_f_name,father_m_name,father_l_name,father_occupation;
+    String mother_f_name,mother_m_name,mother_l_name,mother_occupation;
+    int date,month,year,age;
+    String gender,place_of_birth;
+    String nationality="Indian";
+    String religion,category;
+    String account_type;
+    public void New_Customer()
+    {
+        System.out.print("\n====================Enter Personal Details====================");
+        System.out.print("\nFirst Name: ");
+        f_name=validate_Name(f_name);
+        System.out.print("\nMiddle Name: ");
+        m_name=validate_Name(m_name);
+        System.out.print("\nLast Name: ");
+        l_name=validate_Name(l_name);
+        System.out.print("\nGender: ");
+        validate_Gender();
+        System.out.print("\nDate of Birth: ");
+        System.out.print("\nDate: ");
+        validate_Date();
+        System.out.print("\nMonth: ");
+        validate_Month();
+        System.out.print("\nYear: ");
+        validate_Year();
+        validateAge();
+        System.out.print("\nPlace of Birth: ");
+        sc.nextLine();
+        place_of_birth=sc.nextLine();
+        System.out.print("\nNationality: "+nationality);
+        System.out.print("\nReligion: ");
+        validate_Religion();
+        if(religion.equals("Hindu"))
+        {
+            System.out.print("\nCategory: ");
+            validate_Category();
+        }
+        System.out.println("Enter Your Marital Status: ");
+        if(gender.equals("Male")||gender.equals("Female"))
+        {
+            validateMaritalStatus();
+        }
+        System.out.print("\nMobile no.: ");
+        validate_MobileNO();
+        System.out.print("\nPhone No.(Optional): ");
+        validate_PhoneNO();
+        System.out.print("\n=================================================");
+        System.out.println();
+        System.out.println();
+        System.out.print("\n================Enter Your Father Details==============");
+        System.out.print("\nFather First Name: ");
+        father_f_name=validate_Name(father_f_name);
+        System.out.print("\nFather Middle Name: ");
+        father_m_name=validate_Name(father_m_name);
+        System.out.print("\nFather Last Name: ");
+        father_l_name=validate_Name(father_l_name);
+        System.out.print("\nFather Occupation: ");
+        father_occupation=sc.nextLine();
+        System.out.print("\n==================================================");
+        System.out.println();
+        System.out.println();
+        System.out.print("\n================Enter Mother Details==============");
+        System.out.print("\nMother First Name: ");
+        mother_f_name=validate_Name(mother_f_name);
+        System.out.print("\nMother Middle Name: ");
+        mother_m_name=validate_Name(mother_m_name);
+        System.out.print("\nMother Last Name: ");
+        mother_l_name=validate_Name(mother_l_name);
+        System.out.print("\nMother Occupation: ");
+        mother_occupation=sc.nextLine();
+        System.out.print("\n==================================================");
+        System.out.println();
+        System.out.println();
+        System.out.print("\n========================Enter Address=============================");
+        System.out.print("\nPresent Address: ");
+        pre_address=validate_Address(pre_address,0);
+        System.out.print("\nCity: ");
+        city=validate_Name(city);
+        System.out.print("\nVillage: ");
+        village=validate_Name(village);
+        System.out.print("\nPincode: ");
+        validate_Pincode(pincode);
+        System.out.print("\nDistrict: ");
+        district=validate_Name(district);
+        System.out.print("\nState: ");
+        state=validate_Name(state);
+        System.out.print("\nPermenant Address: ");
+        System.out.print("\n(Note: If Present Address & Permanant Address is same)"
+                +"       (Kindly Enter \"Same as Present Address\"): \n");
+        per_address=validate_Address(per_address,1);
+        System.out.print("\nCountry: ");
+        validate_Country();
+        validate_Account_Type();
+        setDocuments();
+        System.out.print("\n===================================================");
+    }
+
+    //Validating Maritual Status
+    public void validateMaritalStatus()
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            System.out.println("1.Married\t2.Unmarried");
+            System.out.println("Enter from above two numbers only: ");
+            int ch=sc.nextInt();
+            switch(ch)
+            {
+                case 1:
+                {
+                        if(gender.equals("Male"))
+                        {
+                            System.out.println("Enter Above Details of Your Wife: ");
+                            System.out.print("Your Wife's First Name: ");
+                            Wife_f_name=validate_Name(Wife_f_name);
+                            System.out.print("Your Wife's Middle Name: ");
+                            Wife_m_name=validate_Name(Wife_m_name);
+                            System.out.print("Your Wife's Last Name: ");
+                            Wife_l_name=validate_Name(Wife_l_name);
+                            marital_status=true;
+                            flag=false;
+                        }
+                    if(gender.equals("Female")) {
+                        System.out.println("Enter Above Details of Your Husband: ");
+                        System.out.print("Your Husband's First Name: ");
+                        Hus_f_name = validate_Name(Hus_f_name);
+                        System.out.print("Your Husband's Middle Name: ");
+                        Hus_m_name = validate_Name(Hus_m_name);
+                        System.out.print("Your Husband's Last Name: ");
+                        Hus_l_name = validate_Name(Hus_l_name);
+
+                        marital_status = true;
+                        flag = false;
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    flag=false;
+                    break;
+                }
+                default:
+                {
+                    System.out.println("Enter from below numbers only");
+                }
+            }
+        }
+    }
+
+    //Validating Age
+    public void validateAge()
+    {
+        while(true)
+        {
+            age=2023-year;
+            if(age<18)
+            {
+                System.out.println("Age must be grater than or equals to 18");
+                System.out.println("Re-Enter Your Date of Birth");
+                System.out.print("\nDate: ");
+                validate_Date();
+                System.out.print("\nMonth: ");
+                validate_Month();
+                System.out.print("\nYear: ");
+                validate_Year();
+                if(age>=18)
+                {
+                    break;
+                }
+            }
+            if(age>=18)
+            {
+                break;
+            }
+        }
+    }
+
+    //Validating Name
+    public String validate_Name(String name)
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            name=sc.nextLine();
+            for(int i=0;i<name.length();i++)
+            {
+                flag=true;
+                if(name.charAt(i)==' ')
+                {
+                    System.out.println("Kindlly Enter Valid input.");
+                    break;
+                }
+                else if(name.charAt(i)>='A' && name.charAt(i)<='Z')
+                {
+                    flag=false;
+                }
+                else if(name.charAt(i)>='a' && name.charAt(i)<='z')
+                {
+                    flag=false;
+                }
+                else
+                {
+                    flag=true;
+                    System.out.println("Kindlly Enter Valid Input");
+                    break;
+                }
+            }
+        }
+        return name;
+    }
+
+    //validating Gender
+    public void validate_Gender()
+    {
+        System.out.println("Enter Below Options to Choose Gender");
+        System.out.println("1.Male/t2.Female/t3.Others");
+        System.out.println("Enter Your Gender: ");
+        int ch=sc.nextInt();
+
+        switch(ch)
+        {
+            case 1:
+            {
+                gender="Male";
+                break;
+            }
+            case 2:
+            {
+                gender="Female";
+                break;
+            }
+            case 3:
+            {
+                gender="Others";
+                break;
+            }
+            default:
+            {
+                gender="Others";
+                break;
+            }
+        }
+
+    }
+
+    //For Date of Birth
+    //Validating Date
+    public void validate_Date()
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            date=sc.nextInt();
+            if(countdigi(date)==2)
+            {
+                if(date>=1 && date<=31)
+                {
+                    flag=false;
+                }
+                else
+                {
+                    System.out.println("Enter Date between 1 to 31");
+                    System.out.print("\nRe-Enter Date: ");
+                }
+            }
+            else
+            {
+                System.out.print("Enter two digit Date Only");
+                System.out.print("\nRe-Enter Date: ");
+
+            }
+        }
+    }
+
+    //Validating Month
+    public void validate_Month()
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            month=sc.nextInt();
+            if(countdigi(month)==1 || countdigi(month)==2)
+            {
+                if(month>=1 && month<=12)
+                {
+                    flag=false;
+                }
+                else
+                {
+                    System.out.println("Enter Month between 1 to 12");
+                    System.out.print("\nRe-Enter Month: ");
+                }
+            }
+            else
+            {
+                System.out.print("Enter two digit Month Only");
+                System.out.print("\nRe-Enter Month: ");
+            }
+        }
+    }
+
+    //Validating Year
+    public void validate_Year()
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            year=sc.nextInt();
+            if(countdigi(year)==4)
+            {
+                if(year>=1900 && year<=2023)
+                {
+                    flag=false;
+                }
+                else
+                {
+                    System.out.println("Enter Year between 1900 to 2023");
+                    System.out.print("\nRe-Enter Year: ");
+                }
+            }
+            else
+            {
+                System.out.print("Enter Four digit Year Only");
+                System.out.print("\nRe-Enter Year: ");
+            }
+        }
+    }
+
+    //Validating Religion
+    public void validate_Religion()
+    {
+        System.out.println("Enter Below Options to Choose Religion");
+        System.out.println("1.Hindu\n2.Momedian\n3.Shikh\n4.Cristian\n5.Parsi");
+        System.out.println("Enter Your Religion: ");
+        int ch=sc.nextInt();
+
+        switch(ch)
+        {
+            case 1:
+            {
+                religion="Hindu";
+                break;
+            }
+            case 2:
+            {
+                religion="Momedian";
+                break;
+            }
+            case 3:
+            {
+                religion="Shikh";
+                break;
+            }
+            case 4:
+            {
+                religion="Cristian";
+                break;
+            }
+            case 5:
+            {
+                religion="Parsi";
+                break;
+            }
+            default:
+            {
+                System.out.println("Kindly Enter Religion Custom from (Hindu/Momedian/Shikh/Cristian/Parsi/Other you can type): ");
+                religion=sc.nextLine();
+            }
+        }
+    }
+
+    //Validating Category
+    public void validate_Category()
+    {
+        System.out.println("Enter Below Options to Choose Category");
+        System.out.println("1.General\n2.OBC\n3.SC\n4.ST");
+        System.out.println("Enter Your Category: ");
+        int ch=sc.nextInt();
+
+        switch(ch)
+        {
+            case 1:
+            {
+                category="General";
+                break;
+            }
+            case 2:
+            {
+                category="OBC";
+                break;
+            }
+            case 3:
+            {
+                category="SC";
+                break;
+            }
+            case 4:
+            {
+                category="ST";
+                break;
+            }
+            default:
+            {
+                category="General";
+            }
+        }
+    }
+
+    //Counting Digits of given Number
+    public int countdigi(int n)
+    {
+        int count=0;
+        while(n>0)
+        {
+            count++;
+            n/=10;
+        }
+        return count;
+    }
+
+    //Validating Mobile Number
+    public void validate_MobileNO()
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            mobile_no=sc.nextLine();
+            if(mobile_no.length()==10)
+            {
+                for(int i=0;i<mobile_no.length();i++)
+                {
+                    flag=true;
+                    if(mobile_no.charAt(i)>='0' && mobile_no.charAt(i)<='9')
+                    {
+                        flag=false;
+                    }
+                    else
+                    {
+                        System.out.println("Kindly Enter Mobile No. between 0 to 9 Digits");
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                System.out.println("Kindly Enter 10 Digit Mobile No.");
+            }
+        }
+    }
+
+    //Validating PhoneNO.
+    public void validate_PhoneNO()
+    {
+        System.out.println("If you do not have any Tele-Phone No. than you can type NA/na/NO/no/n");
+        boolean flag=true;
+        while(flag)
+        {
+            phone_no=sc.next();
+            if(phone_no.equalsIgnoreCase("NO")||phone_no.equalsIgnoreCase("N")||phone_no.equals("NA")||phone_no.equals("na")||phone_no.charAt(0)=='n'||phone_no.charAt(0)=='N')
+            {
+                phone_no="NA";
+                break;
+            }
+            else {
+                if(phone_no.length()==8)
+                {
+                    for(int i=0;i<phone_no.length();i++)
+                    {
+                        flag=true;
+                        if(phone_no.charAt(i)>='0' && phone_no.charAt(i)<='9')
+                        {
+                            flag=false;
+                        }
+                        else
+                        {
+                            System.out.println("Kindly Enter Tele-Phone between 0 to 9 Digits");
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    System.out.println("Kindly Enter 8 Digit Tele-Phone No.");
+                }
+            }
+        }
+    }
+
+    //Validating Address
+    public String validate_Address(String address,int n)
+    {
+        if(n==1)
+        {
+            address=sc.nextLine();
+            if(address.equalsIgnoreCase("Same as Present Address"))
+            {
+                address="Same as Present Address";
+                return address;
+            }
+            else
+            {
+                address=validate_Address(address,0);
+            }
+        }
+        else if(n==0)
+        {
+            boolean flag=true;
+            while(flag)
+            {
+                address=sc.nextLine();
+                for(int i=0;i<address.length();i++)
+                {
+                    flag=true;
+                    if(address.trim()=="")
+                    {
+                        System.out.println("Kindly Enter Valid input without space");
+                        break;
+                    }
+                    else
+                    {
+                        flag=false;
+                    }
+                }
+            }
+        }
+        return address;
+    }
+
+    //Validating Country
+    public void validate_Country()
+    {
+        country=sc.nextLine();
+        if(country.equalsIgnoreCase("India"))
+        {
+            validate_Account_Type();
+        }
+        else
+        {
+            account_type="NRI";
+        }
+    }
+
+    //Validating Pincode
+    public void validate_Pincode(String pincode)
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            pincode=sc.nextLine();
+            if(pincode.length()==6)
+            {
+                for(int i=0;i<pincode.length();i++)
+                {
+                    flag=true;
+                    if(pincode.charAt(i)>='0' && pincode.charAt(i)<='9')
+                    {
+                        flag=false;
+                    }
+                    else
+                    {
+                        System.out.println("Kindly Enter Pincode of 6 digits between 0 to 9");
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                System.out.println("Kindly Enter 6 Digit Pincode");
+            }
+        }
+    }
+
+    //Validating Account Type
+    public void validate_Account_Type()
+    {
+        boolean flag=true;
+        while(flag)
+        {
+            System.out.println("----------------------------------------------------------------------------------------");
+            System.out.println("Savings Account Interest Rate is: 6.5%");
+            System.out.println("Current Account Interest Rate is: 0.0%");
+            System.out.println("Fixed Deposit Account Maximum Interest Rate is: 7%");
+            System.out.println("NRI Account Interest Rate is: 8.5%");
+            System.out.println("PPF Account Interest Rate is: 7.1%");
+            System.out.println("----------------------------------------------------------------------------------------");
+            System.out.println("Press 1 for Savings Account");
+            System.out.println("Press 2 for Current Account");
+            System.out.println("Press 3 for Fixed Deposit Account");
+            System.out.println("Press 4 for NRI Account");
+            System.out.println("Press 5 for PPF-Public Provident Fund");
+            System.out.println("Enter Your Choice: ");
+            int ch=sc.nextInt();
+
+            switch(ch)
+            {
+                case 1:
+                {
+                    account_type="Savings";
+                    flag=false;
+                    break;
+                }
+                case 2:
+                {
+                    account_type="Current";
+                    flag=false;
+                    break;
+                }
+                case 3:
+                {
+                    account_type="Fixed Deposit";
+                    flag=false;
+                    break;
+                }
+                case 4:
+                    account_type="NRI";
+                    flag=false;
+                    break;
+                case 5:
+                    account_type="PPF";
+                    flag=false;
+                    break;
+                default:
+                {
+                    System.out.println("Kindly Enter Valid Options from above");
+                    break;
+                }
+            }
+        }
+    }
+
+    //Initial Balance
+    public void setInitialBalance(int n)
+    {
+           if(n==1) {System.out.println("You Have to deposit Rs.1000 cash at Bank Premises as Initial Amount");}
+           else if(n==2||n==4){System.out.println("You Have to deposit Rs.10000 cash at Bank Premises as Initial Amount");}
+           else if(n==3||n==5){System.out.println("You Have to deposit Partial cash amount that you selected at Bank Premises as Initial Amount");}
+    }
+
+    //Integrating first,middle,last names
+    public String full_name(String a,String b,String c)
+    {
+        return (a+" "+b+" "+c);
+    }
+    //Displaying Account Details
+    public void display_account_details()
+    {
+        System.out.println("Full Name: "+full_name(f_name,m_name,l_name));
+        System.out.println("Date of Birth: "+date+"/"+month+"/"+year);
+        System.out.println("Mobile No.: "+mobile_no);
+        System.out.println("Gender: "+gender);
+        System.out.println("Age is: "+age);
+        System.out.println("Place of Birth: "+place_of_birth);
+        if(country.equals("India"))
+        {
+            System.out.println("Nationality: "+nationality);
+        }
+        System.out.println("Religion: "+religion);
+        if(category!=null)
+        {
+            System.out.println("Category: "+category);
+        }
+
+        if(marital_status)
+        {
+            System.out.println("Marital Status: Married");
+            if(gender.equals("Male"))
+            {
+                System.out.println("Wife Full Name: "+full_name(Wife_f_name,Wife_m_name,Wife_l_name));
+            }
+            else if(gender.equals("Female"))
+            {
+                System.out.println("Husband Full Name: "+full_name(Hus_f_name,Hus_m_name,Hus_l_name));
+            }
+        }
+        else
+        {
+            System.out.println("Marital Status: UnMarried");
+        }
+
+        System.out.println("Father Name: "+full_name(father_f_name,father_m_name,father_l_name));
+        System.out.println("Father Occupation: "+father_occupation);
+        System.out.println("Mother Name: "+full_name(mother_f_name,mother_m_name,mother_l_name));
+        System.out.println("Mother Occupation: "+mother_occupation);
+        System.out.println("Account Type: "+account_type);
+        System.out.println("Present Address: "+pre_address);
+        System.out.println("Village: "+village);
+        System.out.println("City: "+city);
+        System.out.println("District: "+district);
+        System.out.println("State: "+state);
+        System.out.println("Country: "+country);
+        System.out.println("Permanent Address: "+per_address);
+    }
+
+    //Document Verification
+    public void setDocuments()
+    {
+        System.out.println("You Have to Give Us details for following Documents");
+        System.out.println("----------------------------------------------------------");
+        System.out.println("1.Aadhar Card(Mandatory)\t2.Driving License(Optional)\t3.Election Card(Optional)");
+        System.out.println("4.Light Bill(Mandatory)\t3.Municipal Corporation Tax Bill(Optional)");
+        System.out.println("----------------------------------------------------------");
+        System.out.println("You Have to Come At the Bank to give us Hard Copies of Above given Documents for better Verification"+
+                "\nAnd You also have to give us your Passport Size Photo & Signature of yours on appropriate document");
+    }
+}
+
+//Admin
+class Admin
+{
+    static Scanner sc=new Scanner(System.in);
+    static final String adminid="BOB7531598254";
+    static final String adminpin="BankStaff7531598254";
+    static String id,pin;
+    Admin()
+    {
+        System.out.println("Enter Your ID:");
+        id=validateAdmin(id,"Id",adminid);
+        System.out.println("Enter PIN: ");
+        pin=validateAdmin(pin,"PIN",adminpin);
+        boolean flag=true;
+        Existing_Customer e1=new Existing_Customer();
+        e1.setExistingCustomer();
+        while(flag)
+        {
+            System.out.println("======================================================================================");
+            System.out.println("Press 1 to Display All Existing Customer Details");
+            System.out.println("Press 2 to Freeze Any Particular Account");
+            System.out.println("Press 3 to deposit Money to the Specific Account");
+            System.out.println("Press 4 to Withdraw Money from the Specific Account");
+            System.out.println("Press 5 to Open a New Customer Account at Bank Premises");
+            System.out.println("Press 6 to View Details of Particular Customer");
+            System.out.println("Press 7 to Unfreeze any Freeze Account");
+            System.out.println("Press 8 to Exit");
+            System.out.println("======================================================================================");
+            System.out.println("Enter Your Choice: ");
+            int ch=sc.nextInt();
+
+            switch(ch)
+            {
+                case 1:
+                {
+                    System.out.println("======================================================================================");
+                    System.out.println("---------------------------------All Account Details----------------------------------");
+                    System.out.println("======================================================================================");
+                    e1.all_Details();
+                    System.out.println("======================================================================================");
+                    break;
+                }
+                case 2:
+                {
+                    System.out.println("======================================================================================");
+                    System.out.println("Enter Account Number that you want to Freeze: ");
+                    String account_number="";
+                    account_number=e1.validateAccountNumber(account_number);
+                    System.out.println("Enter Mobile Number: ");
+                    String mbn="";
+                    mbn=e1.validateMobileNo(mbn);
+                    e1=e1.getAccount(account_number,mbn);
+                    if(!e1.transaction_allowed)
+                    {
+                        System.out.println("Your Account is Already Freeze");
+                    }
+                    else
+                    {
+                        e1.transaction_allowed=false;
+                        System.out.println("Now Your Account is Freeze");
+                    }
+                    System.out.println("Money Can be Deposited when Account is Freeze but, money cannot be transacted");
+                    System.out.println("======================================================================================");
+                    break;
+                }
+                case 3:
+                {
+                    System.out.println("======================================================================================");
+                    System.out.println("Enter Account Number in which you want to Deposit Money: ");
+                    String account_number="";
+                    account_number=e1.validateAccountNumber(account_number);
+                    System.out.println("Enter Mobile Number: ");
+                    String mbn="";
+                    mbn=e1.validateMobileNo(mbn);
+                    e1=e1.getAccount(account_number,mbn);
+
+                    while(true)
+                    {
+                        System.out.println("Enter Amount that you want to Deposit: ");
+                        double amount=sc.nextDouble();
+
+                        if(amount<0)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if(amount<e1.balance && amount<=e1.balance-1000)
+                            {
+                                e1.balance+=amount;
+                                break;
+                            }
+                            else
+                            {
+                                System.out.println("Amount must be less than "+e1.balance);
+                            }
+                        }
+                    }
+                    System.out.println("Your Current Balance is now: "+e1.balance);
+                    System.out.println("======================================================================================");
+                    break;
+                }
+                case 4:
+                {
+                    System.out.println("======================================================================================");
+                    System.out.println("Enter Account Number in which you want to Deposit Money: ");
+                    String account_number="";
+                    account_number=e1.validateAccountNumber(account_number);
+                    System.out.println("Enter Mobile Number: ");
+                    String mbn="";
+                    mbn=e1.validateMobileNo(mbn);
+                    e1=e1.getAccount(account_number,mbn);
+                    if(e1.transaction_allowed)
+                    {
+                        while(true)
+                        {
+                            System.out.println("Enter Amount that you want to Withdraw: ");
+                            double amount=sc.nextDouble();
+
+                            if(amount<0)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                if(amount<e1.balance && amount<=e1.balance-1000)
+                                {
+                                    e1.balance-=amount;
+                                    break;
+                                }
+                                else
+                                {
+                                    System.out.println("Amount must be less than "+e1.balance);
+                                }
+                            }
+                        }
+                        System.out.println("Your Current Balance is now: "+e1.balance);
+                        System.out.println("======================================================================================");
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println("======================================================================================");
+                        System.out.println("Your Account is Freezed Now");
+                        System.out.println("======================================================================================");
+                        break;
+                    }
+                }
+                case 5:
+                {
+                    System.out.println("======================================================================================");
+                    New_Customer n1=new New_Customer();
+                    n1.display_account_details();
+                    System.out.println("======================================================================================");
+                    break;
+                }
+                case 6:
+                {
+                    System.out.println("======================================================================================");
+                    System.out.println("Enter Account Number that you want to UnFreeze: ");
+                    String account_number="";
+                    account_number=e1.validateAccountNumber(account_number);
+                    System.out.println("Enter Mobile Number: ");
+                    String mbn="";
+                    mbn=e1.validateMobileNo(mbn);
+                    e1=e1.getAccount(account_number,mbn);
+                    e1.display_account_details();
+                    System.out.println("======================================================================================");
+                    break;
+                }
+                case 7:
+                {
+                    System.out.println("======================================================================================");
+                    System.out.println("Enter Account Number that you want to UnFreeze: ");
+                    String account_number="";
+                    account_number=e1.validateAccountNumber(account_number);
+                    System.out.println("Enter Mobile Number: ");
+                    String mbn="";
+                    mbn=e1.validateMobileNo(mbn);
+                    e1=e1.getAccount(account_number,mbn);
+                    if(e1.transaction_allowed)
+                    {
+                        System.out.println("Your Account is Already Unfreeze");
+                    }
+                    else
+                    {
+                        e1.transaction_allowed=true;
+                        System.out.println("Now Your Account is Unfreeze");
+                    }
+                    System.out.println("======================================================================================");
+                    break;
+                }
+                case 8:
+                {
+                    System.out.println("======================================================================================");
+                    System.exit(0);
+                }
+                default:
+                {
+                    System.out.println("======================================================================================");
+                    System.out.println("Enter Valid Choice");
+                    System.out.println("======================================================================================");
+                    break;
+                }
+            }
+        }
+    }
+
+    //Validating Admin ID & Password
+    static public String validateAdmin(String n,String m,String z)
+    {
+        while(true)
+        {
+            n=sc.next();
+            if(n.equals(z))
+            {
+                System.out.println(m+" verified");
+                break;
+            }
+            else
+            {
+                System.out.println("Invalid "+m);
+                System.out.println("Re-Enter "+m+": ");
+            }
+        }
+        return n;
+    }
+}
+
+public class Bank_Management_System {
+    public static void main(String args[])
+    {
+        System.out.println("=================================================================");
+        System.out.println("=========Welcome to the Online Portal of Bank of Bharat==========");
+        System.out.println("=================================================================");
+        Authentication a1=new Authentication();
+        System.out.println("=================================================================");
+    }
+}
